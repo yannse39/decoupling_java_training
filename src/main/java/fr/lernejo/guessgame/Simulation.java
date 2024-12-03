@@ -32,11 +32,31 @@ public class Simulation {
         return false;
     }
 
-    public void loopUntilPlayerSucceed() {
+    public void loopUntilPlayerSucceed(long maxIterations) {
+        long startTime = System.currentTimeMillis();
+        long iterations = 0;
         boolean success;
+
         do {
             success = nextRound();
-        } while (!success);
-        logger.log("Game over.");
+            iterations++;
+        } while (!success && iterations < maxIterations);
+
+        long endTime = System.currentTimeMillis();
+        long duration = endTime - startTime;
+
+        if (success) {
+            logger.log("You won! It took " + iterations + " iterations in " + formatDuration(duration));
+        } else {
+            logger.log("You lost! The maximum number of iterations (" + maxIterations + ") was reached.");
+        }
+    }
+
+    private String formatDuration(long durationMillis) {
+        long minutes = durationMillis / 60000;
+        long seconds = (durationMillis % 60000) / 1000;
+        long milliseconds = durationMillis % 1000;
+        return String.format("%02d:%02d.%03d", minutes, seconds, milliseconds);
+
     }
 }
